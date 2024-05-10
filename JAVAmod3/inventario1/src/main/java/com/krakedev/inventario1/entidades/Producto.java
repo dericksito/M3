@@ -48,7 +48,7 @@ public class Producto {
 	public void setCoste(BigDecimal coste) {
 		this.coste = coste;
 	}
-	public boolean isTieneIva() {
+	public boolean getTieneIva() {
 		return tieneIva;
 	}
 	public void setTieneIva(boolean tieneIva) {
