@@ -24,7 +24,7 @@ create table categorias_unidad_medida(
 	nombre varchar(100) not null
 );
 create table unidades_medida(
-	codigo char(1) not null primary key,
+	nombre varchar(2) not null primary key,
 	descripcion varchar(100) not null,
 	categoria_udm char(1) not null,
 	constraint catud_fk foreign key(categoria_udm) 
@@ -32,13 +32,14 @@ create table unidades_medida(
 );
 create table productos(
 	codigo serial not null primary key,
-	codigo_udm char(1) not null,
+	nombre varchar(100) not null,
+	codigo_udm varchar(2) not null,
 	precio money not null,
 	tiene_iva boolean not null,
 	coste money not null,
 	codigo_cat serial not null,
 	stock int not null,
-	foreign key(codigo_udm) references unidades_medida(codigo),
+	foreign key(codigo_udm) references unidades_medida(nombre),
 	foreign key(codigo_cat) references categorias(codigo)
 );
 create table tipo_documento(
@@ -121,17 +122,17 @@ INSERT INTO categorias_unidad_medida (codigo, nombre) VALUES
     ('U', 'Unidad');
 
 -- Inserts para la tabla unidades_medida
-INSERT INTO unidades_medida (codigo, descripcion, categoria_udm) VALUES 
-    ('P', 'Kilogramo', 'P'),
-    ('V', 'Litro', 'V'),
-    ('U', 'Unidad', 'U');
+INSERT INTO unidades_medida (nombre, descripcion, categoria_udm) VALUES 
+    ('kg', 'Kilogramo', 'P'),
+    ('l', 'Litro', 'V'),
+    ('u', 'Unidad', 'U');
 
 -- Inserts para la tabla productos
-INSERT INTO productos (codigo_udm, precio, tiene_iva, coste, codigo_cat, stock) VALUES 
-    ('P', 299.99, true, 150.00, 3, 100),
-    ('U', 799.99, true, 500.00, 4, 50),
-    ('P', 49.99, false, 25.00, 5, 200),
-    ('U', 29.99, false, 15.00, 6, 150);
+INSERT INTO productos (nombre,codigo_udm, precio, tiene_iva, coste, codigo_cat, stock) VALUES 
+    ('Coca Cola peque','kg', 299.99, true, 150.00, 3, 100),
+    ('Salsa de tomate','u', 799.99, true, 500.00, 4, 50),
+    ('Mostaza','kg', 49.99, false, 25.00, 5, 200),
+    ('Fuze Tea','u', 29.99, false, 15.00, 6, 150);
 
 -- Inserts para la tabla tipo_documento
 INSERT INTO tipo_documento (codigo, descripcion) VALUES 
