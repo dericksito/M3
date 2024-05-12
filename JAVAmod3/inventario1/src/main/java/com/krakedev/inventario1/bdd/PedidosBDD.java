@@ -75,19 +75,32 @@ public class PedidosBDD {
 	        con = ConexionBDD.obtenerCone();
 	        con.setAutoCommit(false);
 	        // Actualizar los detalles de los pedidos
-	        psDet = con.prepareStatement("UPDATE detalle_pedidos SET cantidad_recibida=?, subtotal=? WHERE codigo=?");
+	        
 	        for (DetallePedidos ped : pedido.getDetallesP()) {
-	            psDet.setInt(1, ped.getCatidadRecibida());
-	            psDet.setBigDecimal(2, ped.getSubtotal());
+	        	psDet = con.prepareStatement("update detalle_pedidos set subtotal=?, cantidad_recibida=? where codigo=?");
+				
+				
+				BigDecimal pv=ped.getProducto().getPrecioVenta();
+				BigDecimal cs = new BigDecimal(ped.getCatidadRecibida());
+				BigDecimal sb=pv.multiply(cs);
+				
+				psDet.setBigDecimal(1, sb);
+	            psDet.setInt(2, ped.getCatidadRecibida());
+	           // BigDecimal subtotal= new BigDecimal(54.66);
+	            
 	            psDet.setInt(3, ped.getCodigo());
+	            System.out.println(">>>>>>>>>>"+psDet);
 	            psDet.executeUpdate();
-	        }
+	            
+}
 
 	        // Actualizar el estado del pedido
 	        psCab = con.prepareStatement("UPDATE cabecera_pedido SET estado=? WHERE numero = ?");
 	        psCab.setString(1, pedido.getEstadoPedido().getCodigo());
 	        psCab.setInt(2, pedido.getNumero());
+	        System.out.println(psCab);
 	        psCab.executeUpdate();
+	       
 	        con.commit();
 	    }catch (KrakedevException e) {
 			e.printStackTrace();
