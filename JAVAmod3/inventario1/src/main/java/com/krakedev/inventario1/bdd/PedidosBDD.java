@@ -46,11 +46,14 @@ public class PedidosBDD {
 				psDet.setInt(1, codigoRS);
 				psDet.setInt(2, det.getProducto().getCodigo() );
 				psDet.setInt(3, det.getCantidadSolicitada());
-				psDet.setInt(4, 0);
+				
 				BigDecimal pv=det.getProducto().getPrecioVenta();
 				BigDecimal cs = new BigDecimal(det.getCantidadSolicitada());
 				BigDecimal sb=pv.multiply(cs);
-				psDet.setBigDecimal(5, sb);
+				psDet.setBigDecimal(4,sb );
+				psDet.setInt(5, 0);
+				
+				System.out.println("ESTE ES EL SUBTOTAL>>>>"+sb);
 				psDet.executeUpdate();
 			}
 
@@ -61,6 +64,37 @@ public class PedidosBDD {
 		}catch (SQLException e) {
 			e.printStackTrace();
 			throw new KrakedevException("Error al insertar pedido");
+		}
+	}
+	
+	public void update(Pedidos pedido) throws KrakedevException {
+	    Connection con = null;
+	    PreparedStatement psDet = null;
+	    PreparedStatement psCab = null;
+	    try {
+	        con = ConexionBDD.obtenerCone();
+	        con.setAutoCommit(false);
+	        // Actualizar los detalles de los pedidos
+	        psDet = con.prepareStatement("UPDATE detalle_pedidos SET cantidad_recibida=?, subtotal=? WHERE codigo=?");
+	        for (DetallePedidos ped : pedido.getDetallesP()) {
+	            psDet.setInt(1, ped.getCatidadRecibida());
+	            psDet.setBigDecimal(2, ped.getSubtotal());
+	            psDet.setInt(3, ped.getCodigo());
+	            psDet.executeUpdate();
+	        }
+
+	        // Actualizar el estado del pedido
+	        psCab = con.prepareStatement("UPDATE cabecera_pedido SET estado=? WHERE numero = ?");
+	        psCab.setString(1, pedido.getEstadoPedido().getCodigo());
+	        psCab.setInt(2, pedido.getNumero());
+	        psCab.executeUpdate();
+	        con.commit();
+	    }catch (KrakedevException e) {
+			e.printStackTrace();
+			throw e; 
+		}catch (SQLException e) {
+			e.printStackTrace();
+			throw new KrakedevException("Error al actualizar el detalle del pedido");
 		}
 	}
 
