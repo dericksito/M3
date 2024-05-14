@@ -102,4 +102,72 @@ public class ProductosBDD {
 			throw new KrakedevException("Error al crear el producto");
 		}
 	}
+	
+	/*ACTUALIZAR PRODUCTO*/
+	public void actualizarP(Producto pr)throws KrakedevException {
+		Connection con=null;
+		PreparedStatement ps=null;
+		try {
+			con = ConexionBDD.obtenerCone();
+			ps=con.prepareStatement("UPDATE productos set nombre=?, codigo_udm=?, precio=?, tiene_iva=?, coste=?, codigo_cat=?, stock=? where codigo=? ");
+			ps.setString(1, pr.getNombre());
+			ps.setString(2, pr.getUdm().getNombre());
+			ps.setBigDecimal(3, pr.getPrecioVenta());
+			ps.setBoolean(4, pr.getTieneIva());
+			ps.setBigDecimal(5, pr.getCoste());
+			ps.setInt(6, pr.getCategoria().getCodigo());
+			ps.setInt(7, pr.getStock());
+			ps.setInt(8, pr.getCodigo());
+			ps.executeUpdate();
+		} catch(KrakedevException e){
+			e.printStackTrace();
+			throw e;
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+			throw new KrakedevException("Error al actualizar el producto");
+		}
+	}
+
+	public Producto buscarProductoPorId(int ide) throws KrakedevException {
+		Connection con=null;
+		PreparedStatement ps=null;
+		ResultSet rs=null;
+		Producto producto=null;
+		try {
+			con = ConexionBDD.obtenerCone();
+			ps = con.prepareStatement("select prod.codigo AS codigo_producto, prod.nombre,"
+					+ "prod.tiene_iva,CAST(prod.coste AS DECIMAL(5,2)),CAST(prod.precio AS DECIMAL(6,2))"
+					+ ",prod.codigo_cat,prod.stock,prod.codigo_udm from productos prod where codigo = ?");
+			ps.setInt(1, ide);
+			rs=ps.executeQuery();
+			if(rs.next()) {
+				int id=rs.getInt("codigo_producto"),stock=rs.getInt("stock");
+				Categoria categoria = new Categoria();
+				categoria.setCodigo(rs.getInt("codigo_cat"));
+				UnidadDeMedida udm = new UnidadDeMedida();
+				udm.setNombre(rs.getString("codigo_udm"));
+				String nombre = rs.getString("nombre");
+				BigDecimal precio=rs.getBigDecimal("precio"),coste=rs.getBigDecimal("coste");
+				Boolean tieneIva=rs.getBoolean("tiene_iva");
+				producto = new Producto();
+				producto.setCategoria(categoria);
+				producto.setCodigo(id);
+				producto.setStock(stock);
+				producto.setTieneIva(tieneIva);
+				producto.setNombre(nombre);
+				producto.setPrecioVenta(precio);
+				producto.setCoste(coste);
+				producto.setUdm(udm);
+
+			}
+		} catch (KrakedevException e) {
+			e.printStackTrace();
+			throw e;
+		}catch (SQLException e) {
+			e.printStackTrace();
+			throw new KrakedevException("Error al consultar");
+		}
+		return producto;
+	}
 }
