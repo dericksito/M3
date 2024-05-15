@@ -15,6 +15,18 @@
     <input type="text" id="txtValor2">
 
     <input type="button" value="SUMAR" onclick="ejecutarSumar();">
-    <input type="button" value="RESTAR" onclick="ejecutarRestar();">
+    <input type="button" value="RESTAR" onclick="ejecutarOperacion(restar);">
+    <input type="button" value="MULTI" onclick="ejecutarOperacion((p1,p2)=>{
+        let resultadoMult=p1*p2;
+        return resultadoMult;
+    });">
+    <input type="button" value="EJECUTAR" onclick="testEjecutar();">
+    <input type="button" value="DETERMINAR MAYOR" onclick="ejecutarOperacion((a1,a2)=>{
+    if(a1>a2){
+    return a1;
+    }else{
+        return a2;
+    }
+    });">
 </body>
 </html>
