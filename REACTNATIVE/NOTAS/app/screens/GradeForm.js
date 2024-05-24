@@ -1,24 +1,49 @@
 import { View,Text,StyleSheet } from "react-native"
 import{Input,Button} from '@rneui/base'
 import { useState } from "react"
-import{saveGrade} from '../services/GredeServices'
+import{saveGrade,updateGrade} from '../services/GredeServices'
 
 export const GradeForms=({navigation,route})=>{//con route recuperamos los datos q nos traemos con el boton con la plabra notita
-    const [subject,setSubject]=useState();
-    const [grade,setGrade]=useState();
+
+   
+    let isNew=true;
+    let subjectR;
+    let gradeR;
+
+   if(route.params.notita!=null){
+    isNew=false;
+   }
+
+   if(!isNew){
+    subjectR=route.params.notita.subject;
+    gradeR=route.params.notita.grade;
+   }
+   
+   
+    const [subject,setSubject]=useState(subjectR);//si es nuevo dejara en null al inicio pero si no traera los datos
+    const [grade, setGrade] = useState(gradeR==null?null:gradeR+"");//conversion a string
     const [errorSubject,setErrorSubject]=useState();
     const [errorGrade,setErrorGrade]=useState();
     let hasErrors=false;
+   
 
-    console.log("devukve>>>"+route.params.notita)
+    console.log(route.params.notita);
+
+
+
+   
     const save=()=>{
         setErrorGrade("");
         setErrorSubject("");
         validate();
         if(!hasErrors){
-
-            saveGrade({subject:subject,grade:grade});
+            if(isNew){
+                saveGrade({subject:subject,grade:grade});
+            }else{
+                updateGrade({subject:subject,grade:grade});
+            }
             navigation.goBack();//nos permite regresar donde estabamos sin tener que poner la ruta otra vez 
+           route.params.fnRefresh();
 
         }
        
@@ -42,6 +67,7 @@ return <View style={styles.container}>
     placeholder="Ejempplo:Matematicas"
     label="Materia"//sirve para darle un titulo al input
     errorMessage={errorSubject}// para mostrar errores abajo de los textos para validaciones
+    disabled={!isNew}
     />
     <Input
     value={grade}

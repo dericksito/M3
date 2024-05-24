@@ -1,13 +1,19 @@
 import { View,Text,StyleSheet,FlatList,TouchableHighlight } from "react-native"
 import {getGrades} from '../services/GredeServices';
 import {FAB,ListItem,Avatar} from '@rneui/base'
+import { useState } from "react";
 
 
 export const ListGrades=({navigation})=>{
+    const [time,setTime]=useState();
+
+    const refreshList=()=>{
+        setTime(new Date().getTime());//funcion truco para resfrescar pantalla
+    }
     const ItemGrade=({nota})=>{
         return  <TouchableHighlight onPress={()=>{
-            navigation.navigate('GradeFormNav',{notita:nota});//para cuando nos lleve  a la poagina nos recuepere los datos con ese nombre notita
-
+            navigation.navigate('GradeFormNav',{notita:nota,fnRefresh:refreshList});//para cuando nos lleve  a la poagina nos recuepere los datos con ese nombre notita
+                                                            //para actualizar la lsita
         }}> 
             <ListItem bottomDivider>
 
@@ -40,15 +46,17 @@ return <ItemGrade
  keyExtractor={(item)=>{
     return item.subject;
  }}
+
+ extraData={time}//aqui se ata la funcion para refrescar pantalla
  />
 
  <FAB
- title="<-"//boton q aparece blotando simplemente y que puedo modificar
+ title="+"//boton q aparece blotando simplemente y que puedo modificar
  placement="right"//para ubicarlo a derecha , izquierda
 
  onPress={()=>{
-    navigation.navigate('GradeFormNav')
- }}
+    navigation.navigate('GradeFormNav',{notita:null,fnRefresh:refreshList})
+ }} 
  />
 </View>
 
@@ -58,7 +66,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#fff',
-      alignItems: 'center',
+      alignItems: 'stretch',
       justifyContent: 'center',
     },
   });
