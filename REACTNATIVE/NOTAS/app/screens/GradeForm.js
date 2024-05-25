@@ -1,100 +1,108 @@
-import { View,Text,StyleSheet } from "react-native"
-import{Input,Button} from '@rneui/base'
-import { useState } from "react"
-import{saveGrade,updateGrade} from '../services/GredeServices'
 
-export const GradeForms=({navigation,route})=>{//con route recuperamos los datos q nos traemos con el boton con la plabra notita
+import { StyleSheet, Text, View } from 'react-native';
+import { Button } from '@rneui/base';
+import { Input } from '@rneui/themed';
+import { Alert } from 'react-native';
+import React, { useState } from 'react';
+import {saveGrade,updateGrade} from '../screens/services/GradeServices'
 
-   
+
+export const GradeForm =({navigation})=>{
     let isNew=true;
-    let subjectR;
-    let gradeR;
+    let subjectR
+    let gradeR
 
-   if(route.params.notita!=null){
-    isNew=false;
-   }
+    // if (route.params?.objeto != null) {
+    //     isNew = false;
+    //     subjectR = route.params.objeto.subject;
+    //     gradeR = route.params.objeto.grade;
+    //   }
 
-   if(!isNew){
-    subjectR=route.params.notita.subject;
-    gradeR=route.params.notita.grade;
-   }
-   
-   
-    const [subject,setSubject]=useState(subjectR);//si es nuevo dejara en null al inicio pero si no traera los datos
-    const [grade, setGrade] = useState(gradeR==null?null:gradeR+"");//conversion a string
-    const [errorSubject,setErrorSubject]=useState();
-    const [errorGrade,setErrorGrade]=useState();
-    let hasErrors=false;
-   
+    // if(route.params.objeto!=null){
+    //     isNew=false;
+    // };
 
-    console.log(route.params.notita);
+    // if (!isNew) {
+    //     subjectR = route.params.objeto.subject
+    //     gradeR = route.params.objeto.grade
+    // };
 
+    const [subject,setSubject]=useState(subjectR);
 
+    const [grade,setGrade]=useState(gradeR==null?null:gradeR+"");
 
-   
-    const save=()=>{
-        setErrorGrade("");
-        setErrorSubject("");
-        validate();
-        if(!hasErrors){
-            if(isNew){
-                saveGrade({subject:subject,grade:grade});
-            }else{
-                updateGrade({subject:subject,grade:grade});
-            }
-            navigation.goBack();//nos permite regresar donde estabamos sin tener que poner la ruta otra vez 
-           route.params.fnRefresh();
+    const [errorSubj,setErrorSub] = useState();
 
-        }
-       
-    }
-    const validate=()=>{
-        if(subject=="" || subject==null){
-            setErrorSubject("Debe ingresar una Materia");
-            hasErrors=true;
-        }
-         let gradeFloat=parseFloat(grade);
+    const [errorGrades,setErrorGrades] = useState();
 
-        if(gradeFloat=="" || gradeFloat==null || isNaN(gradeFloat) || (gradeFloat<0 || gradeFloat>10)){
-        setErrorGrade("Debe ingresar una nota entre 0 y 10");
-        hasErrors=true;
-        }
-    }
-return <View style={styles.container}>
-    <Input
-    value={subject}
-    onChangeText={setSubject}
-    placeholder="Ejempplo:Matematicas"
-    label="Materia"//sirve para darle un titulo al input
-    errorMessage={errorSubject}// para mostrar errores abajo de los textos para validaciones
-    disabled={!isNew}
-    />
-    <Input
-    value={grade}
-    onChangeText={setGrade}
-    placeholder="0-10"
-    label="Nota"
-    errorMessage={errorGrade}
-   // keyboardType="numeric"
-    />
-
-    <Button
-    title="GURDAR"
-    icon={{
-        name:'save',
-        type:'entypo',
-        color:'white',
-    }}
-    buttonStyle={styles.saveButon}//para darle estilos al boton 
+    let hasError=false;
     
-    onPress={()=>{
-        save();
-    }}
-    />
+    
+// console.log(route.params.objeto);
 
-</View>
+    const save=()=>{
+        setErrorGrades();
+        setErrorSub();
+        validate();
+        if (!hasError) {
+            if (isNew) {
+                saveGrade({subject:subject, grade:grade});
+            }else{
+                updateGrade({subject:subject, grade:grade})
+            }
+            navigation.goBack();
+            route.params.fnRefresh();
+        }
+        
 
 }
+
+// const validate=()=>{
+//     if (subject==null || subject=="") {
+//         setErrorSub("DEBE INGRESAR UNA MATERIA");
+//         hasError=true;
+//     }
+//     let gradeFloat =parseFloat(grade)
+//     if (grade==null || isNaN(gradeFloat) || grade<0 || grade>10) {
+//         setErrorGrades("DEBE INGRESAR UNA NOTA ENTRE 0-10");
+//         hasError=true;
+//     }
+// }
+   
+   return(
+        <View style={styles.container}>
+            <Input
+               value={subject}
+                onChangeText={setSubject}
+                placeholder='Ejemplo:Matematicas'
+                label='Materia'
+                errorMessage={errorSubj}
+                disabled={!isNew}
+            /> 
+            <Input
+               value={grade}
+                onChangeText={setGrade}
+                placeholder='0-10'
+                label='Nota'
+                errorMessage={errorGrades}
+            /> 
+
+            <Button
+                title='GUARDAR'
+                icon={{
+                    name:'save',
+                    type:'font-awesome',
+                    color:'white'
+                }}
+                buttonStyle={styles.saveBut}
+                onPress={save}
+
+            />
+        </View>
+
+    );
+}
+
 
 const styles = StyleSheet.create({
     container: {
@@ -103,7 +111,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
-    saveButon:{
+    saveBut:{
         backgroundColor:'green'
     }
   });

@@ -1,4 +1,4 @@
-rootProject.name = 'NOTAS'
+rootProject.name = 'notas'
 
 dependencyResolutionManagement {
   versionCatalogs {
